@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>SRAtoolkit</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                <h3>Summary
+                </h3>
+                <!--
+                1. Simple explanation of what it does (visuals?)
+                    what kind of information does this software use?
+                        what does it mean?
+                -->
+                <div class="infobox indentme">
+                    <!-- summary of what the program does. Perhaps links to the subject matter -->
+                    SRAtools has a function called fastq-dump. This will probably be the first step in your RNA-seq pipeline. This will download the SRA files you need to start your pipeline.
+                    <a href="https://www.ncbi.nlm.nih.gov/books/NBK158900/" class="hiddenlink">[Still Confused?]</a>
+                </div>
+            </div>
+            <div class="box" id="box2">
+                <!--
+                2. how to install program
+                -->
+                <h3>
+                    <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+                        Installation
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid5">
+                     For linux (specifically ubuntu)<br>
+                     <ol start="0">
+                         <li>
+                             (optional but recommended)<br>
+                             <code>cd /home/your_username/</code><br>
+                             <code>mkdir toolkit</code> if you haven't created such a folder already<br>
+                             <code>cd toolkit</code>
+                         </li>
+                         <li>
+                             Get the installation file <a href="software/sratoolkit.current-ubuntu64.tar.gz" target="_blank">here</a> or from the <a href="https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft/">official site</a><br>
+                             save the file as "sratoolkit.tar.gz"<br>
+                             or use<br>
+                             <code>wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz</code><br>
+                         </li>
+                         <li>
+                             extract file<br>
+                            <code>tar -vxzf sratoolkit.tar.gz</code><br>
+                         </li>
+                         <li>
+                             Add the program to your PATH<br>
+                            <code>export PATH="$PATH:/home/your_username/toolkit/sratoolkit/sratoolkit.2.9.1-1-ubuntu64/bin"</code><br>
+                         </li>
+                     </ol>
+                </div>
+            </div>
+            <div class="box" id="box3">
+                <h3>How to use this program
+                </h3>
+                <!--
+                3. examples showing off how to use the program
+                    3.1 sample files students can feed into the program
+                    3.2 instructions
+                    3.3 output to expect (so they know if they're using it correctly)
+                -->
+                <div class="infobox indentme">
+                    Reminder: use<br>
+                    <code>export PATH="$PATH:/home/your_username/toolkit/sratoolkit/sratoolkit.2.9.1-1-ubuntu64/bin"</code><br>
+                    if you haven't already done so in your current session<br>
+                </div>
+                
+                <h4>usage</h4>
+                <div class="infobox indentme">
+                    <code>fastq-dump --outdir &lt;outputDir&gt; &lt;run id&gt;</code><br>
+                    <a href="https://edwards.sdsu.edu/research/fastq-dump/" class="hiddenlink">[Read Further]</a><br>
+                    <br>
+                </div>
+                
+                <h4>my command</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930186<br>
+                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930185<br>
+                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930184<br>
+                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files 
+                    SRR1930183
+                    </div>                
+                </div>
+
+            </div>
+            <a href="Menu.html">
+                <div class="navbut left">menu</div>
+            </a>
+            <a href="TrimmomaticOverview.html">
+                <div class="navbut right">Trimmomatic</div>
+            </a>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>

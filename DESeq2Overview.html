@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>DESeq2</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                <h3>Summary
+                </h3>
+                <!--
+                1. Simple explanation of what it does (visuals?)
+                    what kind of information does this software use?
+                        what does it mean?
+                -->
+                <div class="infobox indentme">
+                    <!-- summary of what the program does. Perhaps links to the subject matter -->
+                    differential gene expression analysis
+                    <a href="https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html" class="hiddenlink">[Still Confused?]</a>
+                </div>
+            </div>
+            <div class="box" id="box2">
+                <!--
+                2. how to install program
+                -->
+                <h3>
+                    <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+                        Installation
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid5">
+                     For linux (specifically ubuntu)<br>
+                     You must first install <a href="https://cran.r-project.org/doc/manuals/R-admin.html#Installing-R-under-Unix_002dalikes">R</a> and <a href="https://bioconductor.org/install/">bioconductor</a> before continuing. You may need assistence from an admin for this.<br>
+                     <ol start="1">
+                         <li>
+                             Installing R <a href="https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-R-under-Unix_002dalikes" class="hiddenlink">[Installing the hard way]</a><br>
+                             <div class="codebox">
+                                 sudo apt-get update<br>
+                                 sudo apt-get install r-base
+                             </div><br>
+                         </li>
+                         <li>
+                             start R with <code>R</code><br>
+                             (optional) if you want to see what an installation in R looks like at first try:<br>
+                             <code>install.packages('dummy')</code>
+                             now R should be in your home directory. dummy should be inside that directory somewhere.<br>
+for me it was in /home/sunlight/R/x86_64-redhat-linux-gnu-library/3.3/dummy<br>To quit R use <code>q()</code>. answer 'n' here.<br>
+                         </li>
+                         <li>
+                             Installing bioconductor <a href="https://bioconductor.org/install/" class="hiddenlink">[Installation Guide]</a><br>
+                             with R running, use <code>source("https://bioconductor.org/biocLite.R")</code><br>
+                             answer 'y' to anything it asks during installation. <br>
+                         </li>
+                         <li>
+                             with R still running, installed biocLite<br>
+                             <code>biocLite()</code><br>
+                         </li>
+                         <li>
+                             Next we'll actually install DESeq2<br>
+                             <code>biocLite("DESeq2")</code>
+                         </li>
+                         <li>
+                             Installation complete. Quit R with <code>q()</code><br>
+                         </li>
+                     </ol>
+                    <a href="https://bioconductor.org/packages/release/bioc/html/DESeq2.html" class="hiddenlink">[Installation Guide]</a><br>
+                </div>
+            </div>
+            <div class="box" id="box3">
+                <h3>How to use this program
+                </h3>
+                <!--
+                3. examples showing off how to use the program
+                    3.1 sample files students can feed into the program
+                    3.2 instructions
+                    3.3 output to expect (so they know if they're using it correctly)
+                -->
+                <div class="infobox indentme">
+                    Use <code>R</code> to start R first.<br>
+                    Then run <code>library("DESeq2")</code><br>
+                </div>
+                
+                <h4>usage</h4>
+                <div class="infobox indentme">
+                    This skeleton outlining useage assumes that an experiment has already been designed and started.<br> It assumes we have a count matrix <code>cts</code> and a sample information table <code>coldata</code>.<br> This table should contain columnms <code>batch</code> and <code>condition</code>.<br>
+                    <div class="codebox">
+                        dds <- DESeqDataSetFromMatrix(countData = cts, \<br>
+                        colData = coldata, \<br>
+                        design= ~ batch + condition)<br>
+                        dds <- DESeq(dds)<br>
+                        res <- results(dds, name="condition_trt_vs_untrt")
+                    </div><br>
+                    <a href="https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf" class="hiddenlink">[Read</a>
+                    <a href="https://bioinformatics.uconn.edu/resources-and-events/tutorials/rna-seq-tutorial-with-reference-genome/" class="hiddenlink"> Further]</a><br>
+                    <br>
+                </div>
+                
+                <h4>my command</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                    directory &lt;- "/home/hwynn/RNAseqExamples/example2/counts"<br>
+                    setwd(directory)<br>
+                    outputPrefix &lt;- "example2_DESeq2"<br>
+                    sampleFiles&lt;- c("SRR1930183-output_basename.counts", "SRR1930184-output_basename.counts", \<br>
+                    "SRR1930185-output_basename.counts", "SRR1930186-output_basename.counts")<br>
+                    sampleNames &lt;- c("Cm_BlueLight_Rep1","Cm_BlueLight_Rep2","Cm_Darkness_Rep1","Cm_Darkness_Rep2")<br>
+                    sampleCondition &lt;- c("bluelight","bluelight","darkness","darkness")<br>
+                    sampleTable &lt;- data.frame(sampleName = sampleNames, fileName = sampleFiles, condition = sampleCondition)<br>
+                    treatments = c("bluelight","darkness")<br>
+                    ddsHTSeq &lt;- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, directory = directory, design = ~ condition)<br>
+                    colData(ddsHTSeq)$condition &lt;- factor(colData(ddsHTSeq)$condition, levels = treatments)<br>
+                    dds &lt;- DESeq(ddsHTSeq)<br>
+                    res &lt;- results(dds)<br>
+                    res= subset(res, padj&lt;0.05)<br>
+                    res &lt;- res[order(res$padj),]<br>
+                    resdata &lt;- merge(as.data.frame(res), as.data.frame(counts(dds,normalized =TRUE)), by = 'row.names', sort = FALSE)<br>
+                    names(resdata)[1] &lt;- 'gene'<br>
+                    write.csv(resdata, file = paste0(outputPrefix, "norm-results.csv"))
+                    </div><br>
+                </div>
+
+            </div>
+            <a href="BEDtoolsOverview.html">
+                <div class="navbut left">BEDtools</div>
+            </a>
+            <a href="Menu.html">
+                <div class="navbut right">Menu</div>
+            </a>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>

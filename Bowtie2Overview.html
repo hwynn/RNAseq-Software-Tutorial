@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>Bowtie2</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                <h3>Summary
+                </h3>
+                <!--
+                1. Simple explanation of what it does (visuals?)
+                    what kind of information does this software use?
+                        what does it mean?
+                -->
+                <div class="infobox indentme">
+                    <!-- summary of what the program does. Perhaps links to the subject matter -->
+                    Bowtie is a sequence alignment and mapping tool the works in conjunction with Tophat
+                    <a href="https://www.ebi.ac.uk/training/online/course/functional-genomics-ii-common-technologies-and-data-analysis-methods/read-mapping-or" class="hiddenlink">[Still Confused?]</a>
+                </div>
+            </div>
+            <div class="box" id="box2">
+                <!--
+                2. how to install program
+                -->
+                <h3>
+                    <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+                        Installation
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid5">
+                     For linux (specifically ubuntu)<br>
+                     <ol start="0">
+                         <li>
+                             (optional but recommended)<br>
+                             <code>cd /home/your_username/</code><br>
+                             <code>mkdir toolkit</code> if you haven't created such a folder already<br>
+                             <code>cd toolkit</code>
+                         </li>
+                         <li>
+                             Get the installation file <a href="software/bowtie2.zip" target="_blank">here</a> or from the <a href="https://sourceforge.net/projects/bowtie-bio/files/bowtie2/">official site</a><br>
+                             save the file as "bowtie2.zip"<br>
+                             or use<br>
+                             <dir class="codebox">wget --output-document bowtie2.zip \<br>
+							 https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1/bowtie2-2.3.4.1-linux-x86_64.zip/download</dir><br>
+                         </li>
+                         <li>
+                             extract file<br>
+                            <code>unzip bowtie2.zip</code><br>
+                         </li>
+						 
+						 <li>
+                             compile program and grant permissions<br>
+							<div class="codebox">
+								cd /home/your_username/toolkit/bowtie2/bowtie2-2.3.3.1-linux-x86_64/<br>
+								make<br>
+								chmod 775 bowtie2<br>
+								chmod 775 bowtie2-build<br>
+								chmod 775 bowtie2-inspect
+							</div><br>
+						 </li>						 
+                         <li>
+                             Add the program to your PATH<br>
+                            <code>export PATH="$PATH:/home/your_username/toolkit/bowtie2/bowtie2-2.3.3.1-linux-x86_64/"</code><br>
+                         </li>
+                     </ol>
+                    <a href="http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#obtaining-bowtie-2" class="hiddenlink">[Installation Guide]</a><br>
+                </div>
+            </div>
+            <div class="box" id="box3">
+                <h3>How to use this program
+                </h3>
+                <!--
+                3. examples showing off how to use the program
+                    3.1 sample files students can feed into the program
+                    3.2 instructions
+                    3.3 output to expect (so they know if they're using it correctly)
+                -->
+                <div class="infobox indentme">
+                    Reminder: use<br>
+                    <code>export PATH="$PATH:/home/your_username/toolkit/bowtie2/bowtie2-2.3.3.1-linux-x86_64/"</code><br>
+                    if you haven't already done so in your current session<br>
+                </div>
+                
+                <h4>usage</h4>
+                <div class="infobox indentme">
+                    <code>bowtie2-build [options]* &lt;reference_in&gt; &lt;bt2_base&gt;</code><br>
+                    <a href="http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer" class="hiddenlink">[Read Further]</a><br>
+                    <br>
+                </div>
+                
+                <h4>my command</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                    bowtie2-build /home/hwynn/brain/index/chr20.fa /home/hwynn/brain/index/chr20
+                    </div>                
+                </div>
+
+            </div>
+            <a href="STAROverview.html">
+                <div class="navbut left">STAR</div>
+            </a>
+            <a href="TophatOverview.html">
+                <div class="navbut right">Tophat</div>
+            </a>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>

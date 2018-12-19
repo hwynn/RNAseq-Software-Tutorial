@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>STAR</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                <h3>Summary
+                </h3>
+                <!--
+                1. Simple explanation of what it does (visuals?)
+                    what kind of information does this software use?
+                        what does it mean?
+                -->
+                <div class="infobox indentme">
+                    <!-- summary of what the program does. Perhaps links to the subject matter -->
+                    STAR indexes reads then maps them to a reference genome.
+                    <a href="https://www.ebi.ac.uk/training/online/course/functional-genomics-ii-common-technologies-and-data-analysis-methods/read-mapping-or" class="hiddenlink">[Still Confused?]</a>
+                </div>
+            </div>
+            <div class="box" id="box2">
+                <!--
+                2. how to install program
+                -->
+                <h3>
+                    <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+                        Installation
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid5">
+                     For linux (specifically ubuntu)<br>
+                     <ol start="0">
+                         <li>
+                             (optional but recommended)<br>
+                             <code>cd /home/your_username/</code><br>
+                             <code>mkdir toolkit</code> if you haven't created such a folder already<br>
+                             <code>cd toolkit</code>
+                         </li>
+                         <li>
+                             Get the installation file <a href="software/STAR-master.zip" target="_blank">here</a> or from the <a href="https://github.com/alexdobin/STAR">official site</a><br>
+                             or use<br>
+                             <code>wget https://github.com/alexdobin/STAR/archive/master.zip</code><br>
+                         </li>
+                         <li>
+                             extract file<br>
+                            <code>gunzip STAR-master.zip</code><br>
+                         </li>
+                         <li>
+                             Add the program to your PATH<br>
+                            <code>export PATH="$PATH:/home/your_username/toolkit/STAR-master/bin/Linux_x86_64"</code><br>
+                         </li>
+                     </ol>
+                </div>
+            </div>
+            <div class="box" id="box3">
+                <h3>Usage
+                </h3>
+                <!--
+                3. examples showing off how to use the program
+                    3.1 sample files students can feed into the program
+                    3.2 instructions
+                    3.3 output to expect (so they know if they're using it correctly)
+                -->
+                <br>
+                <div class="infobox indentme">
+                    Reminder: use<br>
+                    <code>export PATH="$PATH:/home/your_username/toolkit/STAR-master/bin/Linux_x86_64"</code><br>
+                    if you haven't already done so in your current session<br>
+                </div>
+                
+                <h4>Indexing</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                        STAR --runMode &lt;mode&gt; --genomeDir &lt;/path/to/genomeDir&gt;<br> --genomeFastaFiles &lt;/path/to/genome/fasta1 /path/to/genome/fasta2 ...&gt;<br>
+                        --sjdbGTFfile &lt;/path/to/annotations.gtf&gt;<br> 
+                        --sjdbOverhang &lt;ReadLength-1&gt; --runThreadN &lt;number of threads to use&gt;
+                    </div><br>
+                    
+                    <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4631051/" class="hiddenlink">[Read Further]</a><br>
+                    <br>
+                </div>
+                
+                <h4>my command</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                     STAR --runMode genomeGenerate --genomeDir /home/hwynn/tiny2/genome \<br>
+                    --genomeFastaFiles /home/hwynn/tiny2/genome/assembly/genome_assemblies_fasta/ncbi-genomes-2018-07-02/GCF_000091205.1_ASM9120v1_genomic.fa \<br>
+                    --runThreadN 4
+                    </div>
+                    <span class="hiddenlink">This example doesn't use an annotation file. Ideally you should use one.</span><br>
+                </div>
+                
+                <h4>Mapping</h4>
+                <div class="infobox indentme">
+                    <span class="codebox">
+                    STAR --genomeDir &lt;/path/to/genomeDir&gt; --readFilesIn &lt;/path/to/read1&gt; --runThreadN &lt;NumberOfThreads&gt; \<br>
+                        --outSAMtype &lt;BAM/SAM&gt; SortedByCoordinate --outFileNamePrefix &lt;runID&gt;</span><br>
+                    <a href="http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf" class="hiddenlink">[Read Further]</a><br>
+                    <br>
+                </div>
+                
+                <h4>my command</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                    STAR --genomeDir /home/hwynn/tiny2/genome/ \<br>
+                    --readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930183_1.fastq<br> /home/hwynn/tiny2/trimmed/trim_paired_SRR1930183_2.fastq \<br>
+                    --runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix<br> /home/hwynn/tiny2/genome/map/SRR1930183<br>
+                    <br>
+                    STAR --genomeDir /home/hwynn/tiny2/genome/ \<br>
+                    --readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_1.fastq<br> /home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_2.fastq \<br>
+                    --runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix<br> /home/hwynn/tiny2/genome/map/SRR1930184<br>
+                    <br>
+                    STAR --genomeDir /home/hwynn/tiny2/genome/ \<br>
+                    --readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930185_1.fastq<br> /home/hwynn/tiny2/trimmed/trim_paired_SRR1930185_2.fastq \<br>
+                    --runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix<br> /home/hwynn/tiny2/genome/map/SRR1930185<br>
+                    <br>
+                    STAR --genomeDir /home/hwynn/tiny2/genome/ \<br>
+                    --readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930186_1.fastq<br> /home/hwynn/tiny2/trimmed/trim_paired_SRR1930186_2.fastq \<br>
+                    --runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix<br> /home/hwynn/tiny2/genome/map/SRR1930186<br>
+                    </div>
+                </div>
+
+            </div>
+            <a href="TrimmomaticOverview.html">
+                <div class="navbut left">Trimmomatic</div>
+            </a>
+            <a href="TophatOverview.html">
+                <div class="navbut right">Tophat</div>
+            </a>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>

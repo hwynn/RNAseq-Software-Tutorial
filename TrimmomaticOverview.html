@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>Trimmomatic</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                <h3>Summary
+                </h3>
+                <!--
+                1. Simple explanation of what it does (visuals?)
+                    what kind of information does this software use?
+                        what does it mean?
+                -->
+                <div class="infobox indentme">
+                    <!-- summary of what the program does. Perhaps links to the subject matter -->
+                    Trimmomatic trims low quality reads off of raw sequence data before the mapping step.
+                    <a href="https://www.ebi.ac.uk/training/online/course/functional-genomics-ii-common-technologies-and-data-analysis-methods/quality-control-0" class="hiddenlink">[Still Confused?]</a>
+                </div>
+            </div>
+            <div class="box" id="box2">
+                <!--
+                2. how to install program
+                -->
+                <h3>
+                    <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+                        Installation
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid5">
+                     For linux (specifically ubuntu)<br>
+                     <ol start="0">
+                         <li>
+                             (optional but recommended)<br>
+                             <code>cd /home/your_username/</code><br>
+                             <code>mkdir toolkit</code> if you haven't created such a folder already<br>
+                             <code>cd toolkit</code>
+                         </li>
+                         <li>
+                             Get the installation file <a href="software/Trimmomatic-0.38.zip" target="_blank">here</a> or from the <a href="http://www.usadellab.org/cms/?page=trimmomatic">official site</a><br>
+                             or use<br>
+                             <code>wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.38.zip</code><br>
+                         </li>
+                         <li>
+                             extract file<br>
+                            <code>unzip Trimmomatic-0.38.zip</code><br>
+                         </li>
+                         <li>
+                            In case java isn't already installed<br>
+                            <code>sudo apt install default-jre</code><br>
+                         </li>
+                     </ol>
+                </div>
+            </div>
+            <div class="box" id="box3">
+                <h3>usage
+                </h3>
+                <!--
+                3. examples showing off how to use the program
+                    3.1 sample files students can feed into the program
+                    3.2 instructions
+                    3.3 output to expect (so they know if they're using it correctly)
+                -->
+                
+                
+                <div class="infobox indentme">
+                   <h4>Single End Mode</h4>
+                    <div class="codebox">
+                    java -jar &lt;path to trimmomatic jar&gt; SE [-threads &lt;threads&gt;] [-phred33 | -phred64] <br>[-trimlog &lt;logFile&gt;] <br>&lt;input&gt; &lt;output&gt; &lt;step 1&gt; 
+                    </div><br>
+                    <br>
+                    <h4>Paired End Mode</h4>
+                    <div class="codebox">
+                    java -jar &lt;path to trimmomatic.jar&gt; PE [-threads &lt;threads&gt;] [-phred33 | -phred64] <br>[-trimlog &lt;logFile&gt;] &gt;] <br>[-basein &lt;inputBase&gt; | &lt;input 1&gt; &lt;input 2&gt;] <br>[-baseout &lt;outputBase&gt; |
+                    &lt;paired output 1&gt; &lt;unpaired output 1&gt; &lt;paired output 2&gt; &lt;unpaired output 2&gt; &lt;step 1&gt;
+                    </div><br>
+                    <a href="http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf" class="hiddenlink">[Read Further]</a><br>
+                    <br>
+
+                </div>
+                
+                <h4>my command</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                        java -jar /home/hwynn/toolkit/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 4 -phred33 \<br>
+                        -trimlog /home/hwynn/tiny2/logs/logFile \<br>
+                        /home/hwynn/tiny2/raw/SRR1930184_1.fastq /home/hwynn/tiny2/raw/SRR1930184_2.fastq \<br>
+                        /home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_1.fastq /home/hwynn/tiny2/trimmed/trim_unpaired_SRR1930184_1.fastq \<br> 
+                        /home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_2.fastq /home/hwynn/tiny2/trimmed/trim_unpaired_SRR1930184_2.fastq \<br>
+                        ILLUMINACLIP:/home/hwynn/toolkit/Trimmomatic-0.38/adapters/TruSeq3-PE.fa:2:40:15
+                    </div>
+                </div>
+
+            </div>
+            <a href="SRAtoolsOverview.html">
+                <div class="navbut left">sratoolkit</div>
+            </a>
+            <a href="STAROverview.html">
+                <div class="navbut right">STAR</div>
+            </a>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>Tophat</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                <h3>Summary
+                </h3>
+                <!--
+                1. Simple explanation of what it does (visuals?)
+                    what kind of information does this software use?
+                        what does it mean?
+                -->
+                <div class="infobox indentme">
+                    <!-- summary of what the program does. Perhaps links to the subject matter -->
+                    Tophat indexes reads then maps them to a reference genome.
+                    <a href="https://www.ebi.ac.uk/training/online/course/functional-genomics-ii-common-technologies-and-data-analysis-methods/read-mapping-or" class="hiddenlink">[Still Confused?]</a>
+                </div>
+            </div>
+            <div class="box" id="box2">
+                <!--
+                2. how to install program
+                -->
+                <h3>
+                    <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+                        Installation
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid5">
+                     For linux (specifically ubuntu)<br>
+                     <ol start="0">
+                         <li>
+                             (optional but recommended)<br>
+                             <code>cd /home/your_username/</code><br>
+                             <code>mkdir toolkit</code> if you haven't created such a folder already<br>
+                             <code>cd toolkit</code>
+                         </li>
+                         <li>
+                             You must first install <a href="Bowtie2Overview.html">Bowtie2</a> before continuing.
+                         </li>
+                         <li>
+                             Get the installation file <a href="software/tophat-2.1.1.Linux_x86_64.tar.gz" target="_blank">here</a> or from the <a href="https://ccb.jhu.edu/software/tophat/tutorial.shtml">official site</a><br>
+                             save the file as "tophat-2.1.1.Linux_x86_64.tar"<br>
+                             or use<br>
+                             <div class="codebox">wget --output-document tophat-2.1.1.Linux_x86_64.tar \<br> https://ccb.jhu.edu/software/tophat/downloads/tophat-2.1.1.Linux_x86_64.tar.gz</div><br>
+                         </li>
+                         <li>
+                             extract file<br>
+                            <code>tar xvf tophat-2.1.1.Linux_x86_64.tar</code><br>
+                         </li>
+                         <li>
+                             Add the program to your PATH<br>
+                            <code>export PATH="$PATH:/home/your_username/toolkit/tophat-2.1.1.Linux_x86_64"</code><br>
+                         </li>
+                     </ol>
+                    <a href="https://ccb.jhu.edu/software/tophat/tutorial.shtml#inst" class="hiddenlink">[Installation Guide]</a><br>
+                </div>
+            </div>
+            <div class="box" id="box3">
+                <h3>How to use this program
+                </h3>
+                <!--
+                3. examples showing off how to use the program
+                    3.1 sample files students can feed into the program
+                    3.2 instructions
+                    3.3 output to expect (so they know if they're using it correctly)
+                -->
+                <div class="infobox indentme">
+                    Reminder: use<br>
+                    <code>export PATH="$PATH:/home/your_username/toolkit/tophat-2.1.1.Linux_x86_64"</code><br>
+                    if you haven't already done so in your current session<br>
+                </div>
+                
+                <h4>usage</h4>
+                <div class="infobox indentme">
+                    <code>tophat2 [options]* &lt;genome_index_base&gt; &lt;reads1_1[,...,readsN_1]&gt; [reads1_2,...readsN_2]</code><br>
+                    <a href="https://ccb.jhu.edu/software/tophat/manual.shtml#toph" class="hiddenlink">[Read Further]</a><br>
+                    <br>
+                </div>
+                
+                <h4>my command</h4>
+                <div class="infobox indentme">
+                    <div class="codebox">
+                    tophat2 -N 3 --read-edit-dist 5 --read-realign-edit-dist 2 -i 50 -I 5000 --max-coverage-intron 5000 -M -o out /home/hwynn/brain/index/chr20 /home/hwynn/brain/L6_18_GTGAAA_L007_R1_001.fastq
+                    </div>                
+                </div>
+
+            </div>
+            <a href="STAROverview.html">
+                <div class="navbut left">STAR</div>
+            </a>
+            <a href="HTseqOverview.html">
+                <div class="navbut right">HTseq</div>
+            </a>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>
