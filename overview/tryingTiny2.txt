@@ -1,0 +1,189 @@
+#note. This uses pair ended reads
+
+#---------------------------------------------------------------------------------------
+#-------------------------------------sra toolkit---------------------------------------
+#---------------------------------------------------------------------------------------
+
+
+#first use this
+export PATH="$PATH:/home/hwynn/toolkit/sratoolkit/sratoolkit.2.9.1-1-ubuntu64/bin"
+#or 
+export PATH="$PATH:/home/hwynn/toolkit/sratoolkit.2.9.1-1-ubuntu64/bin"
+
+#fastq-dump --outdir <outputDir> <run ID>
+
+fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930186
+fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930185
+fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930184
+fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930183
+
+#---------------------------------------------------------------------------------------
+#-----------------------------------trimming--------------------------------------------
+#---------------------------------------------------------------------------------------
+#http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
+
+ java -jar <path to trimmomatic.jar> PE [-threads <threads] [-phred33 | -phred64] [-trimlog
+<logFile>] >] [-basein <inputBase> | <input 1> <input 2>] [-baseout <outputBase> |
+<paired output 1> <unpaired output 1> <paired output 2> <unpaired output 2> <step 1>
+
+java -jar /home/hwynn/toolkit/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 4 -phred33 -trimlog /home/hwynn/tiny2/logs/logFile \
+/home/hwynn/tiny2/raw/SRR1930184_1.fastq /home/hwynn/tiny2/raw/SRR1930184_2.fastq \
+/home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_1.fastq /home/hwynn/tiny2/trimmed/trim_unpaired_SRR1930184_1.fastq /home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_2.fastq /home/hwynn/tiny2/trimmed/trim_unpaired_SRR1930184_2.fastq \
+ILLUMINACLIP:/home/hwynn/toolkit/Trimmomatic-0.38/adapters/TruSeq3-PE.fa:2:40:15
+ 
+ [trytrim1.sh]
+ #I deleted all the raw files after this was done.
+ 
+#------------------vvv---online example--vvv------------------------
+java -Xmx1G -jar /path_to_trimmomatic/trimmomatic-0.32.jar PE -phred33 -threads 16 -trimlog logfile \
+/path_to_sortmerna_results/reads_non_rRNA_1.fq /path_to_sortmerna_results/reads_non_rRNA_2.fq \
+reads_left_P_qtrim.fq reads_left_U_qtrim.fq reads_right_P_qtrim.fq reads_right_U_qtrim.fq \
+ILLUMINACLIP:/path_to_trimmomatic/TruSeq_adapters.fa:2:30:10 SLIDINGWINDOW:5:20 LEADING:5 TRAILING:5 MINLEN:50 
+
+java -jar /home/hwynn/toolkit/Trimmomatic-0.38 SE [-threads <threads>] [-phred33 | -phred64] [-trimlog
+<logFile>] <input> <output> <step 1>
+
+
+#-----------------------------------------------------------------------------------------------
+#----------------------------------------STAR---------------------------------------------------
+#-----------------------------------------------------------------------------------------------
+export PATH="$PATH:/home/hwynn/toolkit/STAR-master/bin/Linux_x86_64"
+#export PATH="$PATH:/home/hwynn/toolkit/star/STAR-master/bin/Linux_x86_64"
+
+tar xvf /home/hwynn/RNAseqExamples/example2/genome/assembly/genome_assemblies_fasta.tar -C /home/hwynn/RNAseqExamples/example2/genome/assembly/
+gunzip /home/hwynn/RNAseqExamples/example2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.19.gff3.gz
+#gunzip /home/hwynn/RNAseqExamples/example2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.gff3.gz
+gunzip /home/hwynn/RNAseqExamples/example2/genome/assembly/ncbi-genomes-2018-07-02/GCF_000091205.1_ASM9120v1_genomic.fna.gz
+mv /home/hwynn/RNAseqExamples/example2/genome/assembly/ncbi-genomes-2018-07-02/GCF_000091205.1_ASM9120v1_genomic.fna /home/hwynn/RNAseqExamples/example2/genome/assembly/ncbi-genomes-2018-07-02/GCF_000091205.1_ASM9120v1_genomic.fa
+
+
+
+
+#-------------------------------indexing--------------------------------------------------------
+STAR --runMode <mode> --genomeDir </path/to/genomeDir> --genomeFastaFiles </path/to/genome/fasta1 /path/to/genome/fasta2 ...>
+--sjdbGTFfile </path/to/annotations.gtf> --sjdbGTFtagExonParentTranscript Parent (needed if we use gff3 files) --sjdbOverhang <ReadLength-1> --runThreadN <number of threads to use>
+
+/home/hwynn/tiny2/genome
+#unzip/untar file
+#renamed file from fna to fa
+/home/hwynn/tiny2/genome/assembly/genome_assemblies_fasta/ncbi-genomes-2018-07-02/GCF_000091205.1_ASM9120v1_genomic.fa
+
+/home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3
+
+STAR --runMode genomeGenerate --genomeDir /home/hwynn/tiny2/genome \
+--genomeFastaFiles /home/hwynn/tiny2/genome/assembly/genome_assemblies_fasta/ncbi-genomes-2018-07-02/GCF_000091205.1_ASM9120v1_genomic.fa \
+--sjdbGTFfile /home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3 \
+--sjdbGTFtagExonParentTranscript Parent --sjdbOverhang 100 --runThreadN 4
+
+#what():  std::bad_alloc
+#Aborted (core dumped) #not enough memory
+#Fatal INPUT FILE error, no valid exon lines in the GTF file: /home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3
+#Solution: check the formatting of the GTF file. Most likely cause is the difference in chromosome naming between GTF and FASTA file.
+
+
+STAR --runMode genomeGenerate --genomeDir /home/hwynn/tiny2/genome \
+--genomeFastaFiles /home/hwynn/tiny2/genome/assembly/genome_assemblies_fasta/ncbi-genomes-2018-07-02/GCF_000091205.1_ASM9120v1_genomic.fa \
+--runThreadN 4
+#this worked!!!
+
+
+#-----------------------------mapping------------------------------------------------------
+
+STAR --genomeDir </path/to/genomeDir> --readFilesIn </path/to/read1> --runThreadN <NumberOfThreads> --outSAMtype <BAM/SAM> SortedByCoordinate --outFileNamePrefix <runID>
+
+
+STAR --genomeDir /home/hwynn/tiny2/genome/ \
+--readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930183_1.fastq /home/hwynn/tiny2/trimmed/trim_paired_SRR1930183_2.fastq \
+--runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix /home/hwynn/tiny2/genome/map/SRR1930183
+
+STAR --genomeDir /home/hwynn/tiny2/genome/ \
+--readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_1.fastq /home/hwynn/tiny2/trimmed/trim_paired_SRR1930184_2.fastq \
+--runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix /home/hwynn/tiny2/genome/map/SRR1930184
+
+STAR --genomeDir /home/hwynn/tiny2/genome/ \
+--readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930185_1.fastq /home/hwynn/tiny2/trimmed/trim_paired_SRR1930185_2.fastq \
+--runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix /home/hwynn/tiny2/genome/map/SRR1930185
+
+STAR --genomeDir /home/hwynn/tiny2/genome/ \
+--readFilesIn /home/hwynn/tiny2/trimmed/trim_paired_SRR1930186_1.fastq /home/hwynn/tiny2/trimmed/trim_paired_SRR1930186_2.fastq \
+--runThreadN 4 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix /home/hwynn/tiny2/genome/map/SRR1930186
+
+
+example online
+create genome index:
+STAR --runMode genomeGenerate --genomeDir /common/RNASeq_Workshop/Soybean/gmax_genome/ --genomeFastaFiles /common/RNASeq_Workshop/Soybean/gmax_genome/Gmax_275_v2 --sjdbGTFfile /common/RNASeq_Workshop/Soybean/gmax_genome/Gmax_275_Wm82.a2.v1.gene_exons --sjdbGTFtagExonParentTranscript Parent --sjdbOverhang 100 --runThreadN 8
+mapping trimmed reads:
+STAR --genomeDir /common/RNASeq_Workshop/Soybean/gmax_genome/ --readFilesIn trimmed_SRR391535.fastq --runThreadN 8 --outSAMtype BAM SortedByCoordinate --outFileNamePrefix SRR391535
+
+#---------------------------------------------------------------------------------------
+#---------------------------------------Tophat2-----------------------------------------
+#---------------------------------------------------------------------------------------
+
+
+
+
+#-------------------------------------SAMtools------------------------------------------
+#http://quinlanlab.org/tutorials/samtools/samtools.html
+#http://www.htslib.org/doc/samtools-1.1.html
+samtools stats /home/hwynn/tiny2/genome/map/SRR1930186Aligned.sortedByCoord.out.bam | grep "is sorted:"
+
+samtools view /home/hwynn/tiny2/genome/map/SRR1930186Aligned.sortedByCoord.out.bam | head
+samtools sort sample.bam -o sample.sorted.bam .. oh wait nevermind. this has already been sorted by STAR
+
+#---------------------------------------------------------------------------------------
+#---------------------------------------HTSeq-------------------------------------------
+#---------------------------------------------------------------------------------------
+
+#https://htseq.readthedocs.io/en/release_0.10.0/count.html#count
+htseq-count [options] <alignment_files> <gff_file>
+
+htseq-count [options] /home/hwynn/tiny2/genome/map/SRR1930186Aligned.sortedByCoord.out.bam /home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3
+
+htseq-count /home/hwynn/tiny2/genome/map/SRR1930186Aligned.sortedByCoord.out.bam /home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3
+#Error occured when processing GFF file
+
+htseq-count -s no -r pos -t exon -i Parent -f bam /home/hwynn/tiny2/genome/map/SRR1930186Aligned.sortedByCoord.out.bam \
+/home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3 > /home/hwynn/tiny2/genome/counts/SRR1930186-output_basename.counts
+htseq-count -s no -r pos -t exon -i Parent -f bam /home/hwynn/tiny2/genome/map/SRR1930185Aligned.sortedByCoord.out.bam \
+/home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3 > /home/hwynn/tiny2/genome/counts/SRR1930185-output_basename.counts
+htseq-count -s no -r pos -t exon -i Parent -f bam /home/hwynn/tiny2/genome/map/SRR1930184Aligned.sortedByCoord.out.bam \
+/home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3 > /home/hwynn/tiny2/genome/counts/SRR1930184-output_basename.counts
+htseq-count -s no -r pos -t exon -i Parent -f bam /home/hwynn/tiny2/genome/map/SRR1930183Aligned.sortedByCoord.out.bam \
+/home/hwynn/tiny2/genome/annotations/Cyanidioschyzon_merolae.ASM9120v1.39.chromosome.20.gff3 > /home/hwynn/tiny2/genome/counts/SRR1930183-output_basename.counts
+#all counts are 0 but the command works
+
+#example online
+htseq-count -s no -r pos —t exon -i pacid -f bam SRR391535Aligned.sortedByCoord.out.bam /common/RNASeq_Workshop/Soybean/gmax_genome/Gmax_275_Wm82.a2.v1.gene_exons > SRR391535-output_basename.counts
+
+#---------------------------------------------------------------------------------------
+#---------------------------------------DESeq2------------------------------------------
+#---------------------------------------------------------------------------------------
+#biocLite("DESeq2")
+
+R
+# Load DESeq2 library
+library("DESeq2")
+#set working directory
+#directory <- "~/Documents/counts2"
+#directory <- "~/home/hwynn/RNAseqExamples/example2/counts"
+#setwd(directory) #nope. That didn't work. 
+directory <- "/home/hwynn/RNAseqExamples/example2/counts"
+setwd(directory) #this worked!
+# Set the prefix for each output file name
+outputPrefix <- "example2_DESeq2"
+sampleFiles<- c("SRR1930183-output_basename.counts", "SRR1930184-output_basename.counts", "SRR1930185-output_basename.counts", "SRR1930186-output_basename.counts")
+sampleNames <- c("Cm_BlueLight_Rep1","Cm_BlueLight_Rep2","Cm_Darkness_Rep1","Cm_Darkness_Rep2")
+sampleCondition <- c("bluelight","bluelight","darkness","darkness")
+sampleTable <- data.frame(sampleName = sampleNames, fileName = sampleFiles, condition = sampleCondition)
+treatments = c("bluelight","darkness")
+ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, directory = directory, design = ~ condition)
+colData(ddsHTSeq)$condition <- factor(colData(ddsHTSeq)$condition, levels = treatments)
+
+#guts
+dds <- DESeq(ddsHTSeq)
+res <- results(dds)
+
+#okay the trimming step messed up, causing 184 files to be empty
+#this prevented ddsHTSeq() from working since it won't process blank files
+#the mapping step probably messed up because our count data has all 0'sample
+#this also prevented ddsHTSeq() from working

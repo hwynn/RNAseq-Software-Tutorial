@@ -1,0 +1,53 @@
+questions (note: paranthesis surround parameter names, not answers)
+[reading https://github.com/biomendi/TRANSCRIPTOME-ASSEMBLY-PIPELINE/wiki/4.-Quality-trimming-and-adapter-removal-using-TRIMMOMATIC ]
+downloading:
+if the sra files are double ended, should we split them in fastq-dump?
+trimming
+how many threads should I use? (-threads)
+What quality score should be the cuttoff for low quality bases? How do I specify that in trimmomatic? I seem to only have the options -phred33 and -phred64
+what should our sliding window be? (SLIDINGWINDOW:5:20)
+are their any adapter sequences I should search for? (TruSeq_adapters.fa)
+what parameters do we need for adapater clipping? (ILLUMINACLIP)
+what adapater read alignment settings should we use? (2:30:10)
+after the trimming, can we delete the raw files?
+after trimming paired end files, which output files can we delete?
+
+mapping:
+when creating a genome index, how do I know I'm using the right genome and annotation files?
+Should we even use annotation files? Because I'm having a weird issue with gff3 format. Will it mess up our results to not use annotation files?
+When do we use annotations for mapping?
+	since you are mapping to the lncRNA sequences extracted from the genome, you do not need to supply the gtf file
+	https://groups.google.com/forum/#!topic/rna-star/NHwWM9A0rRQ
+
+
+How long does it take STAR to map your files? Because for me it's taking 40 minutes for each sequence read archive. 
+What is your RNA-seq pipeline?
+
+
+
+what is an annotation file?
+	annotations seem to be gff3 or gft files.
+	ftp://ftp.ensembl.org/pub/release-86/gtf/homo_sapiens/Homo_sapiens.GRCh38.86.gtf.gz
+	https://github.com/griffithlab/rnaseq_tutorial/wiki/Annotation
+
+
+what is an assembly file?
+	assembly files seem to be .fa or fasta files. 
+
+is a reference genome an annotation or assembly file?
+	a reference genome is NOT an annotation file. Implied by https://bioinformatics.uconn.edu/resources-and-events/tutorials/rna-seq-tutorial-with-reference-genome/
+	we can get them here? ftp://ftp.ensembl.org/pub/release-86/fasta/homo_sapiens/dna/
+
+what is a gene set?
+	gene set is a fasta file. implied by links found at https://cofactorgenomics.com/choosing-a-reference-for-your-rna-seq-experiment/
+
+
+
+In this project: https://www.ncbi.nlm.nih.gov/Traces/study/?acc=ERP108822
+several of the files have "_L" or "_R" in the name like "OR 13L" or "Cntl 3R". What does that mean? 
+	is it left and right? 
+	What about the OR and the Cntrl?
+	what does the number by L and R mean?
+	Could I use them both in the same RNAseq pipeline or would they not intersect (or something like that)?
+
+how did you get your computer to not lock after 5 minutes? My computer keeps resetting the brightness & lock settings whenever I try to change them. 
