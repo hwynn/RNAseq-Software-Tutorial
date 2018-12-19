@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <HTML>
 	<HEAD>
-		<TITLE> CBB@KU </TITLE>
+		<TITLE> KU teaches RNA-seq </TITLE>
 		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
 		<script>
 			function toggleExtra(x) {
@@ -11,22 +11,29 @@
 		</script>
 	</HEAD>
 	<body>
-		<div id="container" style="background-color:silver">
-		<div id="wrapper" style="background-color:burlywood">
-		<h1>SRAtoolkit</h1>
-		<div id="page" style="background-color:gold">
-        <div id="content" style="background-color:beige">
-            <div class="box" id="box1" style="background-color:red">
+		<div id="container">
+		<div id="wrapper">
+		<h1>REPLACEMESOFTWARENAME</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
                 <h3>Summary
                 </h3>
-
+                <!--
+                1. Simple explanation of what it does (visuals?)
+                    what kind of information does this software use?
+                        what does it mean?
+                -->
                 <div class="infobox indentme">
-                    Thing
-                    <a href="" id="hiddenlink">[Still Confused?]</a>
+                    <!-- summary of what the program does. Perhaps links to the subject matter -->
+                    REPLACEMESUMMARY
+                    <a href="REPLACEMESTILLCONFUSED" id="hiddenlink">[Still Confused?]</a>
                 </div>
             </div>
-            <div class="box" id="box2" style="background-color:blue">
-
+            <div class="box" id="box2">
+                <!--
+                2. how to install program
+                -->
                 <h3>
                     <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
                         Installation
@@ -34,7 +41,7 @@
                 </h3>
                 <div class="extra indentme" id="extrabid5">
                      For linux (specifically ubuntu)<br>
-                     <ol start="0" style="background-color:#15df3f">
+                     <ol start="0">
                          <li>
                              (optional but recommended)<br>
                              <code>cd /home/your_username/</code><br>
@@ -42,23 +49,27 @@
                              <code>cd toolkit</code>
                          </li>
                          <li>
-                             Get the installation file <a href="file" target="_blank">here</a> or from the <a href="url">official site</a><br>
-                             save the file as "file.tar.gz"<br>
+                             You must first install <a href="REPLACEMEREQUIREDPROGURL">REPLACEMEREQUIREDPROGNAME</a> before continuing.
+                         </li>
+                         <li>
+                             Get the installation file <a href="REPLACEMEHOSTEDFILEURL" target="_blank">here</a> or from the <a href="REPLACEMEOFFICIALSITEURL">official site</a><br>
+                             save the file as "REPLACEMEIDEALZIPFILENAME"<br>
                              or use<br>
-                             <code>wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz</code><br>
+                             <code>wget --output-document REPLACEMEIDEALZIPFILENAME REPLACEMEURLOFDIRECTDOWNLOAD</code><br>
                          </li>
                          <li>
                              extract file<br>
-                            <code>tar -vxzf sratoolkit.tar.gz</code><br>
+                            <code>tar -vxzf | gunzip | tar xvf REPLACEMEIDEALZIPFILENAME</code><br>
                          </li>
                          <li>
                              Add the program to your PATH<br>
-                            <code>installation command</code><br>
+                            <code>export PATH="$PATH:REPLACEMEEXPORTPATH"</code><br>
                          </li>
                      </ol>
+                    <a href="REPLACEMEOFFICIALINSTALLATIONGUIDE" id="hiddenlink">[Installation Guide]</a><br>
                 </div>
             </div>
-            <div class="box" id="box3" style="background-color:yellow">
+            <div class="box" id="box3">
                 <h3>How to use this program
                 </h3>
                 <!--
@@ -67,32 +78,33 @@
                     3.2 instructions
                     3.3 output to expect (so they know if they're using it correctly)
                 -->
-                <br>
                 <div class="infobox indentme">
                     Reminder: use<br>
-                    <code>export PATH="$PATH:/home/your_username/toolkit/sratoolkit/sratoolkit.2.9.1-1-ubuntu64/bin"</code><br>
+                    <code>export PATH="$PATH:REPLACEMEEXPORTPATH"</code><br>
                     if you haven't already done so in your current session<br>
                 </div>
                 
-                <h4>usage</h4><br>
+                <h4>usage</h4>
                 <div class="infobox indentme">
-                    <code>fastq-dump --outdir &lt;outputDir&gt; &lt;run id&gt;</code><br>
-                    <a href="https://edwards.sdsu.edu/research/fastq-dump/" id="hiddenlink">[Read Further]</a><br>
+                    <code>REPLACEMECOMMANDTEMPLATE</code><br>
+                    <a href="REPLACEMEREADFURTHERURL" id="hiddenlink">[Read Further]</a><br>
                     <br>
                 </div>
                 
-                <h4>my command</h4><br>
+                <h4>my command</h4>
                 <div class="infobox indentme">
                     <div class="codebox">
-                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930186<br>
-                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930185<br>
-                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files SRR1930184<br>
-                    fastq-dump --outdir /home/hwynn/tiny2/raw --split-files 
-                    SRR1930183
+                    REPLACEMEMYCOMMAND
                     </div>                
                 </div>
 
             </div>
+            <a href="REPLACEMEPREVURL">
+                <div class="navbut left">menu</div>
+            </a>
+            <a href="REPLACEMENEXTURL">
+                <div class="navbut right">Trimmomatic</div>
+            </a>
         </div>
 		</div>
         </div>
