@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>RNA-seq Walkthrough</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                
+                <p>If you need to refresh your memory on the basics of RNA sequencing, <a href="https://www.youtube.com/watch?v=tlf6wYJrwKY">this video</a> simply explains the basic principles.<br>
+                </p>
+                
+
+                <br>
+                <p>This is an overview of the RNA-seq pipeline we will be using.</p>
+                <img src="chart1.png" width="700">
+                <p>As the chart suggests, you will need SRAtoolkit, STAR, htseq, and DESeq2 installed to perform this experiment.</p>
+                <h3>
+                    <span class="clickable1" id="togglebid1" onclick="toggleExtra('bid1')">
+                        What is this experiment?
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid1">
+                </div>
+                
+                <h3>
+                    <span class="clickable1" id="togglebid2" onclick="toggleExtra('bid2')">
+                        File types
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid2">
+                    <p>
+                    fasta stands for "Fast All" and is used for storing reference genome data. 
+                        [<a href="https://www.rdocumentation.org/packages/bios2mds/versions/1.2.2/topics/export.fasta">x</a>]. These files might also use the extension ".fa". <br><br>
+	                   fastq stores genome data along with sequence quality data.
+                        [<a href="http://maq.sourceforge.net/fastq.shtml">x</a>][<a href="https://bioinformatics.stackexchange.com/questions/14/what-is-the-difference-between-fasta-fastq-and-sam-file-formats#385">x</a>]<br><br>
+	gtf stands for "gene transfer format" and is used to store genes and their attributes. 
+                        [<a href="https://genome.ucsc.edu/FAQ/FAQformat.html#format4">x</a>]
+                        These are referred to as "annotations". <br><br>
+	SAM stands for "Sequence Alignment Map". SAM files save alignment data of mapped reads against reference genomes. 
+                        [<a href="http://www.metagenomics.wiki/tools/samtools/bam-sam-file-format">x</a>]<br><br>
+	BAM stands for "Binary Alignment Map". BAM files contain the same information as SAM files, but stored in binary format. 
+                        [<a href="https://genome.sph.umich.edu/wiki/BAM">x</a>]<br>
+                    </p>
+                </div>
+                <h3>Step 0 Setting up your directory</h3>
+                <p>Assuming you have gone through the software installation process, you should have the folder "toolkit" in your home directory with the necessary binary software packages.<br>
+                Now you will need a path for RNAseq datasets. I named mine "RNAseqExamples". Inside this we will create the folder for the dataset we will be using. I named mine "human" since it's a human.<br>
+                From your home directory, run the following commands.
+                </p>
+                <div class="codebox">
+                    homepath=$(pwd)<br>
+                    echo $homepath<br>
+                    cd RNAseqExamples<br>
+                    cd human<br>
+                    mkdir raw<br>
+                    mkdir map<br>
+                    mkdir logs<br>
+                    mkdir trimmed<br>
+                    mkdir counts<br>
+                    RNApath=$homepath/RNAseqExamples/human<br>
+                    echo $RNApath<br>
+                    mkdir genome<br>
+                    cd genome<br>
+                    mkdir annotations<br>
+                    mkdir assembly<br>
+                    cd $homepath
+                </div><br>
+                <br>
+                <h3>Step 1 <br>Getting input files</h3>
+                <p>First we'll need the annotation and assembly files for the reference genome.</p>
+                <div class="codebox">
+                    wget -P $RNApath/genome/annotations/ ftp://ftp.ensembl.org/pub/release-86/gtf/homo_sapiens/Homo_sapiens.GRCh38.86.gtf.gz<br>
+                    wget -P $RNApath/genome/assembly/ ftp://ftp.ensembl.org/pub/release-86/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.17.fa.gz<br>
+                    cd $RNApath/genome/annotations/<br>
+                    gunzip Homo_sapiens.GRCh38.86.gtf.gz<br>                
+                    cd $RNApath/genome/assembly/<br>
+                    gunzip Homo_sapiens.GRCh38.dna.chromosome.17.fa.gz
+                </div><br>
+                <p>
+                    Next it's time to download sequence reads. We'll be using SRAtoolkit.<br>
+                    In addition to the normal useage shown in the reference page, we will be taking steps to empty the cache. Each time you use fastq-dump. SRAtoolkit creates a file in the cache to assist the download. But when really large files are downloaded, these files will quickly fill up your cache. So this time, we will be running a command called "cache-mgr" after each call to fastq-dump. 
+                    first try running this command<br>
+                    <code>fastq-dump --outdir $RNApath/raw --split-files SRR1930184</code><br>
+                    to find where SRAtoolkit stores the cache. Mine is stored in "/users/hwynn/ncbi/public/sra"<br>
+                    
+                    
+                    <br>These files will be very large and it will take a while to download all of them.
+                </p>
+                <div class="codebox">
+                    homepath=$(pwd)<br>
+                    RNApath=$homepath/RNAseqExamples/human<br>
+                    SRAcachepath=/path/to/your/sracache<br>
+                    export PATH="$PATH:/home/your_username/toolkit/sratoolkit.2.9.1-1-ubuntu64/bin"
+                    fastq-dump --outdir $RNApath/raw --split-files ERR2587301
+                    cache-mgr $SRAcachepath -c
+                    fastq-dump --outdir $RNApath/raw --split-files ERR2587302
+                    cache-mgr $SRAcachepath -c
+                    fastq-dump --outdir $RNApath/raw --split-files ERR2587303
+                    cache-mgr $SRAcachepath -c
+                    fastq-dump --outdir $RNApath/raw --split-files ERR2587304
+                    cache-mgr $SRAcachepath -c
+                    fastq-dump --outdir $RNApath/raw --split-files ERR2587305
+                    cache-mgr $SRAcachepath -c
+                    fastq-dump --outdir $RNApath/raw --split-files ERR2587306
+                    cache-mgr $SRAcachepath -c
+                </div><br>
+                <br>
+                <h3>Step 2 <br>Preprocessing: Trimming</h3>
+                <p>Normally we would do a quality control step called trimming. In low quality reads you will find that the runs are surrounded with the letter "N" repeated for a long time. This means that we don't know what nucleic acids are at those positions. "N" could represent any of them. This means these low quality reads could map to a bunch of different positions they probably don't belong. This would mess up our results in the end.<br>
+                However, the sequence reads that we're using for this experiment use high quality reads. So we don't need to use trimming in this experiment.</p>
+                
+                
+                <br>
+                <h3>Step 3 <br>Preprocessing indexing</h3>
+                <p>Before mapping the reads, we want to create an index for the genome. This makes the mapping process faster.</p>
+                <span class="clickable1" id="togglebid3" onclick="toggleExtra('bid3')">
+                    Important Note: Don't copy/paste the command below until you read this!
+                </span>
+                <div class="extra indentme" id="extrabid3">
+                    Before we start this process, it's important to know the capabilities of the machine you're using. The <code>--runThreadN</code> argument tells STAR how many threads to use. First we must know how many threads your computer can provide.<br>
+                    Run this command <code>nproc --all</code> to learn <a href="https://stackoverflow.com/a/17089001">how many cores</a> your computer has. If your computer has 8 cores, it can definitely provide 8 threads. The computer I'm running this on has 32 cores, so any command arguments about threads will have 32 as the value. You'll want to modify this value  in all following commands if your computer doesn't have 32 cores.<br>
+                </div>
+                    
+                <p>Run the following command to create the index we'll be using.</p>
+                
+                <div class="codebox">
+                    STAR --runMode genomeGenerate --genomeDir $RNApath/genome \<br>
+                    --genomeFastaFiles $RNApath/genome/assembly/Homo_sapiens.GRCh38.dna.chromosome.17.fa \<br>
+                    --sjdbGTFfile $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf \<br>
+                    --runThreadN 32
+                </div><br>
+                <br>
+                <h3>Step 4 <br>Alignment and mapping</h3>
+                <p>Alignment compares individual reads to a reference genome sequence.[<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004393">x</a>]</p>
+                <span class="clickable1" id="togglebid4" onclick="toggleExtra('bid4')">
+                    Here's a basic visualization of the alignment process:
+                </span>
+                <div class="extra indentme" id="extrabid4">
+                    <img src="rna-seq-7-638.jpg" width="700"><br>
+                    [<a href="https://www.slideshare.net/AmithaDasari/rna-seq-69795083">x</a>]
+                </div>
+                <p>These are the commands to align and map all of our reads. Running these will take a VERY long time. So I'd recommend running these commands overnight.</p>
+                
+                <div class="codebox">
+                    STAR --genomeDir $RNApath/genome/ \<br>
+                    --readFilesIn $RNApath/raw/ERR2587301_1.fastq $RNApath/raw/ERR2587301_2.fastq \<br>
+                    --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/<br>
+                    STAR --genomeDir $RNApath/genome/ \<br>
+                    --readFilesIn $RNApath/raw/ERR2587302_1.fastq $RNApath/raw/ERR2587302_2.fastq \<br>
+                    --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587302<br>
+                    STAR --genomeDir $RNApath/genome/ \<br>
+                    --readFilesIn $RNApath/raw/ERR2587303_1.fastq $RNApath/raw/ERR2587303_2.fastq \<br>
+                    --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587303<br>
+                    STAR --genomeDir $RNApath/genome/ \<br>
+                    --readFilesIn $RNApath/raw/ERR2587304_1.fastq $RNApath/raw/ERR2587304_2.fastq \<br>
+                    --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587304<br>
+                    STAR --genomeDir $RNApath/genome/ \<br>
+                    --readFilesIn $RNApath/raw/ERR2587305_1.fastq $RNApath/raw/ERR2587305_2.fastq \<br>
+                    --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587305<br>
+                    STAR --genomeDir $RNApath/genome/ \<br>
+                    --readFilesIn $RNApath/raw/ERR2587306_1.fastq $RNApath/raw/ERR2587306_2.fastq \<br>
+                    --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587306
+                </div><br>
+                
+                <br>
+                <h3>Step 5 <br>Count based Abundance Estimation</h3>
+                <p>Welcome back. In this next step we count the number of reads that map to each gene. After that mapping step, I'll assume you're starting a new session. So run the following commands from your home directory.</p>
+                <div class="codebox">
+                    homepath=$(pwd)<br>
+                    echo $homepath<br>
+                    cd RNAseqExamples<br>
+                    cd human<br>
+                    RNApath=$homepath/RNAseqExamples/human<br>
+                    echo $RNApath<br>
+                    htseq-count -s no -r pos -f bam $RNApath/map/ERR2587301Aligned.out.bam \<br>
+                    $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587301-out.counts<br>
+                    htseq-count -s no -r pos -f bam $RNApath/map/ERR2587302Aligned.out.bam \<br>
+                    $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587302-out.counts<br>
+                    htseq-count -s no -r pos -f bam $RNApath/map/ERR2587303Aligned.out.bam \<br>
+                    $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587303-out.counts<br>
+                    htseq-count -s no -r pos -f bam $RNApath/map/ERR2587304Aligned.out.bam \<br>
+                    $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587304-out.counts<br>
+                    htseq-count -s no -r pos -f bam $RNApath/map/ERR2587305Aligned.out.bam \<br>
+                    $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587305-out.counts<br>
+                    htseq-count -s no -r pos -f bam $RNApath/map/ERR2587306Aligned.out.bam \<br>
+                    $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587306-out.counts
+                </div><br>
+                <br>
+                <h3>Step 6 <br>Count Analysis</h3>
+                <p>We will be analyzing the count data. This will be done in the program R. So the following commands probably won't work as a shell script. You'll just have to copy and paste them into the command line. Be warned that copying and pasting too many of these commands at once might confuse the program. So just take this part slowly.<br>
+                The following section has been adapted from <a href="https://bioinformatics.uconn.edu/resources-and-events/tutorials-2/rna-seq-tutorial-with-reference-genome/">this tutorial</a>.
+                <br>First from the home directory, run <code>R</code>
+                </p>
+                
+                <div class="codebox longcode">
+                    library("DESeq2")<br>
+                    directory <- "/home/your_username/RNAseqExamples/human/counts"<br>
+                    setwd(directory)<br>
+                    outputPrefix <- "human_DESeq2"<br>
+                    sampleFiles<- c("ERR2587301-out.counts","ERR2587302-out.counts","ERR2587303-out.counts","ERR2587304-out.counts","ERR2587305-out.counts","ERR2587306-out.counts")<br>
+                    sampleNames <- c("201STG_CONTROL_3637R_1R1","201STG_CONTROL_3637R_1R2","201STG_CONTROL_3637R_1R3","201STG_ Olaparib-response_6350L_12L1","201STG_ Olaparib-response_6350L_12L2","201STG_ Olaparib-response_6350L_12L3")<br>
+                </div><br>
+                <p>
+                    Now we must enter the conditions. "Treated with vehicle" means the sample was treated with the same solution that it was cultured on.[<a href="http://www.protocol-online.org/biology-forums/posts/36366.html">x</a>] So it's control group.<br>
+                    Treatment naive means the cells are from a patient that has never undergone treatment for a certain illness.[<a href="https://www.verywellhealth.com/treatment-naive-3132655">x</a>]
+                </p>
+                <div class="codebox longcode">
+                    sampleCondition <- c("TxNiav_modl_trt_w_vehicle","TxNiav_modl_trt_w_vehicle","TxNiav_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle")
+                    sampleTable <- data.frame(sampleName = sampleNames, fileName = sampleFiles, condition = sampleCondition)<br>
+                    treatments = c("TxNiav_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle")<br>
+                    ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, directory = directory, design = ~ condition)<br>
+                    colData(ddsHTSeq)$condition <- factor(colData(ddsHTSeq)$condition, levels = treatments)<br>
+                    dds <- DESeq(ddsHTSeq)<br>
+                    res <- results(dds)<br>
+                    res= subset(res, padj<0.05)<br>
+                    res <- res[order(res$padj),]<br>
+                    resdata <- merge(as.data.frame(res), as.data.frame(counts(dds,normalized =TRUE)), by = 'row.names', sort = FALSE)<br>
+                    names(resdata)[1] <- 'gene'<br>
+                    write.csv(resdata, file = paste0(outputPrefix, "norm-results1.csv"))<br>
+                    write.table(as.data.frame(counts(dds),normalized=T), file = paste0(outputPrefix, "_normalized_counts1.txt"), sep = '\t')
+                </div><br>
+                
+                <br>
+                <h3>Step 7 <br>Visualization</h3>
+                <p>Don't quit out of R yet. These commands will visualize the data we've created. Do not copy and paste all of these commands at once. R will get confused, and you'll have to start this step all over again. Take this process slowly.</p>
+                <div class="codebox longcode">
+                    mcols(res, use.names = T)<br>
+                    write.csv(as.data.frame(mcols(res, use.name = T)),file = paste0(outputPrefix, "-test-conditions1.csv"))<br>
+                    ddsClean <- replaceOutliersWithTrimmedMean(dds)<br>
+                    ddsClean <- DESeq(ddsClean)<br>
+                    tab <- table(initial = results(dds)$padj < 0.05,cleaned = results(ddsClean)$padj < 0.05)<br>
+                    addmargins(tab)<br>
+                    write.csv(as.data.frame(tab),file = paste0(outputPrefix, "-replaceoutliers1.csv"))<br>
+                    resClean <- results(ddsClean)<br>
+                    resClean = subset(res, padj<0.05)<br>
+                    resClean <- resClean[order(resClean$padj),]<br>
+                    write.csv(as.data.frame(resClean),file = paste0(outputPrefix, "-replaceoutliers-results1.csv"))<br>
+                    png(filename="/home/your_username/RNAseqExamples/human/counts/MAinitial_analysis1.png")<br>
+                    plotMA(dds, ylim=c(-8,8),main = "RNAseq experiment1")<br>
+                    dev.off()<br>
+                    rld <- rlogTransformation(dds, blind=T)<br>
+                    vsd <- varianceStabilizingTransformation(dds, blind=T)<br>
+                    write.table(as.data.frame(assay(rld),file = paste0(outputPrefix, "-rlog-transformed-counts1.txt"), sep = '\t'))<br>
+                    write.table(as.data.frame(assay(vsd),file = paste0(outputPrefix, "-vst-transformed-counts1.txt"), sep = '\t'))<br>
+                    par(mai = ifelse(1:4 <= 2, par('mai'),0))<br>
+                    px <- counts(dds)[,1] / sizeFactors(dds)[1]<br>
+                    ord <- order(px)<br>
+                    ord <- ord[px[ord] < 150]<br>
+                    ord <- ord[seq(1,length(ord),length=50)]<br>
+                    last <- ord[length(ord)]<br>
+                    vstcol <- c('blue','black')<br>
+                    png(filename="/home/your_username/RNAseqExamples/human/counts/MATvariance_stabilizing1.png")<br>
+                    matplot(px[ord], cbind(assay(vsd)[,1], log2(px))[ord, ],type='l', lty = 1, col=vstcol, xlab = 'n', ylab = 'f(n)')<br>
+                    legend('bottomright',legend=c(expression('variance stabilizing transformation'), expression(log[2](n/s[1]))), fill=vstcol)<br>
+                    dev.off()<br>
+                    library("RColorBrewer")<br>
+                    library("gplots")<br>
+                    distsRL <- dist(t(assay(rld)))<br>
+                    mat <- as.matrix(distsRL)<br>
+                    rownames(mat) <- colnames(mat) <- with(colData(dds), paste(condition, sampleNames, sep=" : "))<br>
+                    hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)<br>
+                    png(filename="/home/your_username/RNAseqExamples/human/counts/MAclustering1.png")<br>
+                    heatmap.2(mat, trace = "none", col = rev(hmcol), margin = c(13,13))<br>
+                    dev.off()<br>
+                    library("genefilter")<br>
+                    library("ggplot2")<br>
+                    library("grDevices")<br>
+                    rv <- rowVars(assay(rld))<br>
+                    select <- order(rv, decreasing=T)[seq_len(min(500,length(rv)))]<br>
+                    pc <- prcomp(t(assay(vsd)[select,]))<br>
+                    # set condition<br>
+                    condition <- treatments<br>
+                    scores <- data.frame(pc$x, condition)<br>
+                    (pcaplot <- ggplot(scores, aes(x = PC1, y = PC2, col = (factor(condition))))<br>
+                    + geom_point(size = 5)<br>
+                    + ggtitle("Principal Components")<br>
+                    + scale_colour_brewer(name = " ", palette = "Set1")<br>
+                    + theme(<br>
+                      plot.title = element_text(face = 'bold'),<br>
+                      legend.position = c(.9,.2),<br>
+                      legend.key = element_rect(fill = 'NA'),<br>
+                      legend.text = element_text(size = 10, face = "bold"),<br>
+                      axis.text.y = element_text(colour = "Black"),<br>
+                      axis.text.x = element_text(colour = "Black"),<br>
+                      axis.title.x = element_text(face = "bold"),<br>
+                      axis.title.y = element_text(face = 'bold'),<br>
+                      panel.grid.major.x = element_blank(),<br>
+                      panel.grid.major.y = element_blank(),<br>
+                      panel.grid.minor.x = element_blank(),<br>
+                      panel.grid.minor.y = element_blank(),<br>
+                      panel.background = element_rect(color = 'black',fill = NA)<br>
+                    ))<br>
+                    ggsave(pcaplot,file=paste0(outputPrefix, "-ggplot21.pdf"))<br>
+                    # scatter plot of rlog transformations between Sample conditions<br>
+                    head(assay(rld))<br>
+                    # plot(log2(1+counts(dds,normalized=T)[,1:2]),col='black',pch=20,cex=0.3, main='Log2 transformed')<br>
+                    plot(assay(rld)[,1:3],col='#00000020',pch=20,cex=0.3, main = "rlog transformed")<br>
+                    plot(assay(rld)[,2:4],col='#00000020',pch=20,cex=0.3, main = "rlog transformed")<br>
+                    plot(assay(rld)[,6:5],col='#00000020',pch=20,cex=0.3, main = "rlog transformed")<br>
+                    # heatmap of data<br>
+                    library("RColorBrewer")<br>
+                    library("gplots")<br>
+                    # 1000 top expressed genes with heatmap.2<br>
+                    select <- order(rowMeans(counts(ddsClean,normalized=T)),decreasing=T)[1:1000]<br>
+                    my_palette <- colorRampPalette(c("blue",'white','red'))(n=1000)<br>
+                    png(filename="/home/your_username/RNAseqExamples/human/counts/HEATMAP1.png")<br>
+                    heatmap.2(assay(vsd)[select,], col=my_palette,scale="row",key=T,keysize=1,symkey=T,density.info="none", trace="none",cexCol=0.6, labRow=F,main="1000 Top Expressed Genes Heatmap")<br>
+                    dev.off()
+                </div><br>
+                <h3>
+                    <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+                        Check Results
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid5">
+                    <p>
+                        You should have pictures that look like this.<br>
+                        <img src="MAinitial_analysis1.png" width="300">
+                        <img src="MATvariance_stabilizing1.png" width="300"><br>
+                        <img src="HEATMAP1.png" width="300">
+                        <img src="MAclustering1.png" width="300"><br>
+                    </p>
+                </div>
+                
+                <p>That's it. Run <code>q()</code> to quit R.</p>
+                <h3>
+                    <span class="clickable1" id="togglebid6" onclick="toggleExtra('bid6')">
+                        Experiment Further
+                    </span>
+                </h3>
+                <div class="extra indentme" id="extrabid6">
+                    <p>
+                        All the previous steps only covered an experiment using just the control group. We saw the gene expression differences between the resistant model and the treatment naive model. Now for those of you that want to try running a more complete experiment, keep going from here. This will be a more complete experiment using
+                        <a href="https://www.ncbi.nlm.nih.gov/Traces/study/?acc=ERP108822">the control treated models and the models treated with PARP inhibitor</a>.<br>
+                        This part is a completely optional expansion on what we've already done. So if you had any trouble storing all those files or running any of the programs, don't worry about this stuff. This is just for those that are curious and capable to keep going further.<br>
+                        First we need to download all the extra files and run them through the same process to get the counts. This will take a very, very long time. So I recommend that you create a script of the following commands. Be careful to adjust the script to match your setup as we did in all the previous steps. You don't want to find out that the script that took all night to run got stuck because of an error. 
+                    </p>
+                    <div class="codebox">
+                         #!/bin/bash<br>
+                        export PATH="$PATH:/home/your_username/toolkit/sratoolkit.2.9.1-1-ubuntu64/bin"<br>
+                        export PATH="$PATH:/home/your_username/toolkit/star/STAR-master/bin/Linux_x86_64"<br>
+                        homepath=$(pwd)<br>
+                        echo $homepath<br>
+                        cd RNAseqExamples<br>
+                        cd human<br>
+                        RNApath=$homepath/RNAseqExamples/human<br>
+                        echo $RNApath<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587348<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587347<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587343<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587342<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587341<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587340<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587346<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587345<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587344<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587339<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        fastq-dump --outdir $RNApath/raw --split-files ERR2587338<br>
+                        cache-mgr /users/your_username/ncbi/public/sra -c<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587348_1.fastq $RNApath/raw/ERR2587348_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587348<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587347_1.fastq $RNApath/raw/ERR2587347_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587347<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587343_1.fastq $RNApath/raw/ERR2587343_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587343<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587342_1.fastq $RNApath/raw/ERR2587342_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587342<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587341_1.fastq $RNApath/raw/ERR2587341_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587341<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587340_1.fastq $RNApath/raw/ERR2587340_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587340<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587346_1.fastq $RNApath/raw/ERR2587346_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587346<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587345_1.fastq $RNApath/raw/ERR2587345_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587345<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587344_1.fastq $RNApath/raw/ERR2587344_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587344<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587339_1.fastq $RNApath/raw/ERR2587339_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587339<br>
+                        STAR --genomeDir $RNApath/genome/ \<br>
+                        --readFilesIn $RNApath/raw/ERR2587338_1.fastq $RNApath/raw/ERR2587338_2.fastq \<br>
+                        --runThreadN 32 --outSAMtype BAM Unsorted --outFileNamePrefix $RNApath/map/ERR2587338<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587348Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587348-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587347Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587347-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587343Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587343-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587342Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587342-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587341Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587341-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587340Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587340-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587346Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587346-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587345Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587345-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587344Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587344-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587339Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587339-out.counts<br>
+                        htseq-count -s no -r pos -f bam $RNApath/map/ERR2587338Aligned.out.bam \<br>
+                        $RNApath/genome/annotations/Homo_sapiens.GRCh38.86.gtf > $RNApath/counts/ERR2587338-out.counts
+                    </div><br>
+                    <p>
+                        Save this as a bash script "experimentFurther.sh" and store it on your home directory.
+                        Give yourself permission to run the script with <code>chmod 775 experimentFurther.sh</code><br>
+                        You can start this script sometime when you'll be away from your computer for a long time. I recommend running the script overnight. 
+                        To start the script, just run <code>./experimentFurther.sh</code>
+                    </p>
+                    <p>
+                        Now we have the count data from untreated and treated runs. The analysis and visualization process will be similar to before. You will be able to see the difference the treatment group creates.<br>
+                        Let's repeat the stuff we did in R. From the home directory, start <code>R</code> and run the following commands. Only paste a few commands at a time.
+                    </p>
+                    <div class="codebox longcode">
+                        library("DESeq2")<br>
+                        directory <- "/home/your_username/RNAseqExamples/human/counts"<br>
+                        setwd(directory)<br>
+                        outputPrefix <- "breast_cancer"<br>
+                        sampleFiles<- c("ERR2587301-out.counts","ERR2587302-out.counts","ERR2587303-out.counts","ERR2587304-out.counts","ERR2587305-out.counts","ERR2587306-out.counts","ERR2587346-out.counts","ERR2587345-out.counts","ERR2587344-out.counts","ERR2587339-out.counts","ERR2587338-out.counts","ERR2587348-out.counts","ERR2587347-out.counts","ERR2587343-out.counts","ERR2587342-out.counts","ERR2587341-out.counts","ERR2587340-out.counts")<br>
+                        sampleNames <- c("201STG_CONTROL_3637R_1R1","201STG_CONTROL_3637R_1R2","201STG_CONTROL_3637R_1R3","201STG_ Olaparib-response_6350L_12L1","201STG_ Olaparib-response_6350L_12L2","201STG_ Olaparib-response_6350L_12L3","178_16 201STG OLAP OR 14L","552_17 201STG OR Cntl 1R","552_17 201STG OR Cntl 4R","552_17201STG OR Cntl 3R","552_17 201STG OR Cntl 1L","552_17 201STG OR Olap 11R","552_17 201STG OR Olap 13R","552_17 201STG OR Olap 15R","552_17 201STG OR Olap 12L","552_17 201STG OR Olap 14R","552_17 201STG OR Olap 15L")<br>
+                        sampleCondition <- c("TxNiav_modl_trt_w_vehicle","TxNiav_modl_trt_w_vehicle","TxNiav_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","TxNiav_modl_trt_w_parpInh","TxNiav_modl_trt_w_parpInh","TxNiav_modl_trt_w_parpInh","TxNiav_modl_trt_w_parpInh","TxNiav_modl_trt_w_parpInh","Rsist_modl_trt_w_parpInh","Rsist_modl_trt_w_parpInh","Rsist_modl_trt_w_parpInh","Rsist_modl_trt_w_parpInh","Rsist_modl_trt_w_parpInh","Rsist_modl_trt_w_parpInh")<br>
+                        sampleTable <- data.frame(sampleName = sampleNames, fileName = sampleFiles, condition = sampleCondition)<br>
+                        treatments = c("TxNiav_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","TxNiav_modl_trt_w_parpInh","Rsist_modl_trt_w_parpInh")<br>
+                        ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, directory = directory, design = ~ condition)<br>
+                        colData(ddsHTSeq)$condition <- factor(colData(ddsHTSeq)$condition, levels = treatments)<br>
+                        dds <- DESeq(ddsHTSeq)<br>
+                        res <- results(dds)<br>
+                        res= subset(res, padj<0.05)<br>
+                        res <- res[order(res$padj),]<br>
+                        resdata <- merge(as.data.frame(res), as.data.frame(counts(dds,normalized =TRUE)), by = 'row.names', sort = FALSE)<br>
+                        names(resdata)[1] <- 'gene'<br>
+                        write.csv(resdata, file = paste0(outputPrefix, "norm-results2.csv"))<br>
+                        write.table(as.data.frame(counts(dds),normalized=T), file = paste0(outputPrefix, "_normalized_counts2.txt"), sep = '\t')<br>
+                        mcols(res, use.names = T)<br>
+                        write.csv(as.data.frame(mcols(res, use.name = T)),file = paste0(outputPrefix, "-test-conditions2.csv"))<br>
+                        ddsClean <- replaceOutliersWithTrimmedMean(dds)<br>
+                        ddsClean <- DESeq(ddsClean)<br>
+                        tab <- table(initial = results(dds)$padj < 0.05,cleaned = results(ddsClean)$padj < 0.05)<br>
+                        addmargins(tab)<br>
+                        write.csv(as.data.frame(tab),file = paste0(outputPrefix, "-replaceoutliers2.csv"))<br>
+                        resClean <- results(ddsClean)<br>
+                        resClean = subset(res, padj<0.05)<br>
+                        resClean <- resClean[order(resClean$padj),]<br>
+                        write.csv(as.data.frame(resClean),file = paste0(outputPrefix, "-replaceoutliers-results2.csv"))<br>
+                        png(filename="/home/your_username/RNAseqExamples/human/counts/MAinitial_analysis2.png")<br>
+                        plotMA(dds, ylim=c(-8,8),main = "PARP-inhibitors applied to BRCA1-null PDX models")<br>
+                        dev.off()<br>
+                        rld <- rlogTransformation(dds, blind=T)<br>
+                        vsd <- varianceStabilizingTransformation(dds, blind=T)<br>
+                        write.table(as.data.frame(assay(rld),file = paste0(outputPrefix, "-rlog-transformed-counts2.txt"), sep = '\t'))<br>
+                        write.table(as.data.frame(assay(vsd),file = paste0(outputPrefix, "-vst-transformed-counts2.txt"), sep = '\t'))<br>
+                        par(mai = ifelse(1:4 <= 2, par('mai'),0))<br>
+                        px <- counts(dds)[,1] / sizeFactors(dds)[1]<br>
+                        ord <- order(px)<br>
+                        ord <- ord[px[ord] < 150]<br>
+                        ord <- ord[seq(1,length(ord),length=50)]<br>
+                        last <- ord[length(ord)]<br>
+                        vstcol <- c('blue','black')<br>
+                        png(filename="/home/your_username/RNAseqExamples/human/counts/MATvariance_stabilizing2.png")<br>
+                        matplot(px[ord], cbind(assay(vsd)[,1], log2(px))[ord, ],type='l', lty = 1, col=vstcol, xlab = 'n', ylab = 'f(n)')<br>
+                        legend('bottomright',legend=c(expression('variance stabilizing transformation'), expression(log[2](n/s[1]))), fill=vstcol)<br>
+                        dev.off()<br>
+                        library("RColorBrewer")<br>
+                        library("gplots")<br>
+                        distsRL <- dist(t(assay(rld)))<br>
+                        mat <- as.matrix(distsRL)<br>
+                        rownames(mat) <- colnames(mat) <- with(colData(dds), condition)<br>
+                        hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)<br>
+                        png(filename="/home/your_username/RNAseqExamples/human/counts/MAclustering2.png")<br>
+                        heatmap.2(mat, trace = "none", col = rev(hmcol), margin = c(13,13))<br>
+                        dev.off()<br>
+                        library("genefilter")<br>
+                        library("ggplot2")<br>
+                        library("grDevices")<br>
+                        # heatmap of data<br>
+                        library("RColorBrewer")<br>
+                        library("gplots")<br>
+                        # 1000 top expressed genes with heatmap.2<br>
+                        select <- order(rowMeans(counts(ddsClean,normalized=T)),decreasing=T)[1:1000]<br>
+                        my_palette <- colorRampPalette(c("blue",'white','red'))(n=1000)<br>
+                        png(filename="/home/your_username/RNAseqExamples/human/counts/HEATMAP2.png")<br>
+                        heatmap.2(assay(vsd)[select,], col=my_palette,scale="row",key=T,keysize=1,symkey=T,density.info="none", trace="none",cexCol=0.6, labRow=F,main="1000 Top Expressed Genes Heatmap")<br>
+                        dev.off()
+                    </div><br>
+                    <p>You should now have charts that look like this</p>
+                    <img src="MAinitial_analysis2.png" width="300">
+                    <img src="MATvariance_stabilizing2.png" width="300"><br>
+                    <img src="HEATMAP2.png" width="300">
+                    <img src="MAclustering2.png" width="300"><br>
+                    <p>
+                    You can use R to try different analysis strategies. You can use <a href="https://www.rstudio.com/products/rstudio/download/">Rstudio</a> on your own computer. Rstudio is availible for Mac and Windows unlike many of the other programs in our RNA-seq pipeline.
+                    </p>
+                    
+                    
+                </div>
+                <br>
+                <h2><a href="Menu.html">Return to the Menu</a><br></h2>
+                
+            </div>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>

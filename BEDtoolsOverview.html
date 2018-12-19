@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<HTML>
+
+<HEAD>
+    <TITLE> KU teaches RNA-seq </TITLE>
+    <LINK REL="stylesheet" TYPE="text/css" HREF="style2.css">
+    <script>
+        function toggleExtra(x) {
+            console.log("toggleExtra(" + x + ")")
+            document.getElementById("extra" + x).classList.toggle("show");
+        };
+
+    </script>
+</HEAD>
+
+<body>
+    <div id="container">
+    <div id="wrapper">
+    <h1>BEDtools</h1>
+    <div id="page">
+    <div id="content">
+        <div class="box" id="box1">
+            <h3>Summary
+            </h3>
+            <!--
+    1. Simple explanation of what it does (visuals?)
+        what kind of information does this software use?
+            what does it mean?
+    -->
+            <div class="infobox indentme">
+                <!-- summary of what the program does. Perhaps links to the subject matter -->
+                BEDtools is used for genome arithmetic. BEDtools intersect can be used to identify and count all regions in multiple files of genetic data overlap. However the results from BEDtools insersect will differ from those of htseq-count.
+                <a href="https://media.readthedocs.org/pdf/bedtools/latest/bedtools.pdf" class="hiddenlink">[Still Confused?]</a>
+            </div>
+        </div>
+        <div class="box" id="box2">
+            <!--
+    2. how to install program
+    -->
+            <h3>
+                <span class="clickable1" id="togglebid5" onclick="toggleExtra('bid5')">
+            Installation
+        </span>
+            </h3>
+            <div class="extra indentme" id="extrabid5">
+                For linux (specifically ubuntu)<br>
+                <ol start="0">
+                    <li>
+                        (optional but recommended)<br>
+                        <code>cd /home/your_username/</code><br>
+                        <code>mkdir toolkit</code> if you haven't created such a folder already<br>
+                        <code>cd toolkit</code>
+                    </li>
+
+                    <li>
+                        Get the installation file <a href="software/bedtools-2.27.1.tar.gz" target="_blank">here</a> or from the <a href="https://github.com/arq5x/bedtools2/">official site</a><br> save the file as "bedtools-2.27.1.tar.gz"<br> or use<br>
+                        <code>wget --output-document bedtools-2.27.1.tar.gz https://github.com/arq5x/bedtools2/releases/download/v2.27.1/bedtools-2.27.1.tar.gz</code><br>
+                    </li>
+                    <li>
+                        extract file<br>
+                        <div class="codebox">
+                            tar xvfz bedtools-2.27.1.tar.gz<br> 
+                            cd bedtools2
+                        </div><br>
+                    </li>
+                    <li>
+                        you may have to install zlib. Ask an admin for help if using a school computer.
+                        <div class="codebox">
+                            sudo apt-get install zlib1g-dev<br>
+                            sudo apt-get install zlib
+                        </div><br>
+                    </li>
+                    <li>
+                        compile<br>
+                        <code>make</code><br>
+                    </li>
+                    <li>
+                        Add the program to your PATH<br>
+                        <code>export PATH="$PATH:/home/your_username/toolkit/bedtools2/bin"</code><br>
+                    </li>
+                </ol>
+                <a href="http://bedtools.readthedocs.io/en/latest/content/installation.html" class="hiddenlink">[Installation Guide]</a><br>
+            </div>
+        </div>
+        <div class="box" id="box3">
+            <h3>How to use this program
+            </h3>
+            <!--
+    3. examples showing off how to use the program
+        3.1 sample files students can feed into the program
+        3.2 instructions
+        3.3 output to expect (so they know if they're using it correctly)
+    -->
+            <div class="infobox indentme">
+                Reminder: use<br>
+                <code>export PATH="$PATH:/home/your_username/toolkit/bedtools2/bin"</code><br> if you haven't already done so in your current session<br>
+            </div>
+
+            <h4>usage</h4>
+            <div class="infobox indentme">
+                <code>bedtools intersect [OPTIONS] -a &lt;bed/gff/vcf/bam&gt; -b &lt;bed/gff/vcf/bam&gt;</code><br>
+                <a href="http://bedtools.readthedocs.io/en/latest/content/general-usage.html" class="hiddenlink">[Read</a>
+                <a href="http://quinlanlab.org/tutorials/bedtools/bedtools.html" class="hiddenlink"> Further]</a>
+                <br>
+            </div>
+
+            <h4>my command</h4>
+            <div class="infobox indentme">
+                <div class="codebox">
+                    bedtools intersect -a /home/hwynn/sample3/out/a_testZeroLen.bed -b /home/hwynn/sample3/out/b_testZeroLen.bed
+
+                </div>
+            </div>
+
+        </div>
+        <a href="HTseqOverview.html">
+            <div class="navbut left">HTseq</div>
+        </a>
+        <a href="DESeq2Overview.html">
+            <div class="navbut right">DESeq2</div>
+        </a>
+    </div>
+    </div>
+    </div>
+    </div>
+</body>
+
+</html>

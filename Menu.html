@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE> KU teaches RNA-seq </TITLE>
+		<LINK REL = "stylesheet" TYPE = "text/css" HREF = "style2.css">
+		<script>
+			function toggleExtra(x) {
+            console.log("toggleExtra("+x+")")
+			document.getElementById("extra"+x).classList.toggle("show");
+			};
+		</script>
+	</HEAD>
+	<body>
+		<div id="container">
+		<div id="wrapper">
+		<h1>RNA-seq Software Guide</h1>
+		<div id="page">
+        <div id="content">
+            <div class="box" id="box1">
+                <h3>About this guide</h3>
+                <p>The first section of this guide is devoted to reference pages for each of the software. 
+                They will explain how to install the software as well as a brief explanation as to how to use it. 
+                In each reference page, I show you what my commands looked like when running the software. This is is simply a visual demonstration of what a command might look like when you use the program. Don't actually try running those exact commands.</p>
+                <br>
+                <p>The second section of this guide will explain RNA-seq and provide a step by step walkthrough of a complete experiment using an RNA-seq pipeline.
+                This guide provides links to several relevant sources and even other similar guides. Hopefully this reduces the amount of time you'll have to spend searching for answers. 
+                To reduce clutter, some of these links will be invisible until you hover over them. For the first section these will mostly be in the installation section and at the end of the typical usage section.</p>
+                
+                <h4>what is RNA-seq?</h4>
+                <a href="https://galaxyproject.org/tutorials/rb_rnaseq/">https://galaxyproject.org/tutorials/rb_rnaseq/</a><br>
+                <a href="http://www.rna-seqblog.com/www-rnaseq-wiki/">http://www.rna-seqblog.com/www-rnaseq-wiki/</a><br>
+                <br>
+                <h3>Software Reference Pages</h3>
+                <a href="SRAtoolsOverview.html">SRAtools</a><br>
+                <a href="TrimmomaticOverview.html">Trimmomatic</a><br>
+                <a href="STAROverview.html">STAR</a><br>
+                <a href="Bowtie2Overview.html">Bowtie2</a><br>
+                <a href="TophatOverview.html">Tophat</a><br>
+                <a href="HTseqOverview.html">HTseq</a><br>
+                <a href="BEDtoolsOverview.html">BEDtools</a><br>
+                <a href="DESeq2Overview.html">DESeq2</a><br>
+                <br>
+                <h3>Walthrough</h3>
+                This will show you an entire RNAseq experiment from start to finish.<br>
+                <a href="RNAseqWalkthrough.html">RNA-seq Walkthrough</a><br>
+            </div>
+        </div>
+		</div>
+        </div>
+        </div>
+	</body>
+</html>
