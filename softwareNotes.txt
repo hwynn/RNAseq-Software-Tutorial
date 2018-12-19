@@ -1,0 +1,179 @@
+Is there some basic software I should understand first before using these?
+
+Maybe some kind of data visualization program?
+
+
+also I'm trying to figure out the basics of bioinformatics
+https://www.biostars.org/p/180453/
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC341448/
+http://www.ccg.unam.mx/~vinuesa/tlem/pdfs/Bioinformatics_explained_HMMER.pdf
+https://www.ebi.ac.uk/training/online/course/functional-genomics-ii-common-technologies-and-data-analysis-methods/gene-set-enrichment
+
+
+RNA-seq explanation
+https://galaxyproject.org/tutorials/rb_rnaseq/
+http://www.rna-seqblog.com/www-rnaseq-wiki/
+https://www.ebi.ac.uk/training/online/course/functional-genomics-ii-common-technologies-and-data-analysis-methods/rna-sequencing
+https://en.wikipedia.org/wiki/RNA-Seq#Differential_expression_and_absolute_quantification_of_transcripts
+https://www.rna-seqblog.com/introduction-to-rna-sequencing-and-analysis/
+
+full RNA-seq tutorial
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4972086/
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2951732/
+https://github.com/griffithlab/rnaseq_tutorial/
+https://bioinformatics.uconn.edu/resources-and-events/tutorials/rna-seq-tutorial-with-reference-genome/
+
+
+
+=====================================================================================================================================================
+Trimmomatic
+http://www.usadellab.org/cms/?page=trimmomatic
+
+Installation:
+No installation is required. Just download the zip file (not the source one). Extract it and run
+java -jar <path to trimmomatic jar> SE
+
+okay. This uses fastq files I think?
+I'm trying to find sample files to use. They should be in https://basespace.illumina.com/datacentral
+but it's really confusing. Maybe this only works for some filetype that occurs in a data pipeline setup through this company's software?
+Would I need to install other stuff first? I'll put this one on hold. 
+I sent an email to illumina asking about this public data. I mentioned it's part of my job, so hopefully I'll hear back from them. 
+
+=====================================================================================================================================================
+Tophat
+https://ccb.jhu.edu/software/tophat/igenomes.shtml
+https://ccb.jhu.edu/software/tophat/manual.shtml#prer
+https://ccb.jhu.edu/software/tophat/index.shtml
+
+how to use: https://www.youtube.com/watch?v=PSNu54zYNGg
+
+installation:
+http://ccb.jhu.edu/software/tophat/tutorial.shtml
+
+https://www.biostars.org/p/177592/
+
+
+=====================================================================================================================================================
+STAR
+https://github.com/alexdobin/STAR
+http://homer.ucsd.edu/homer/basicTutorial/mapping.html
+https://wikis.utexas.edu/display/bioiteam/Mapping+with+STAR
+
+note: for thread, use the highest number possible if you want to make the mapping process fast. 
+	http://seqanswers.com/forums/showthread.php?t=31815
+to see how many cores you have (and thus how many threads you can have)
+run:
+	nproc --all
+https://stackoverflow.com/questions/6481005/how-to-obtain-the-number-of-cpus-cores-in-linux-from-the-command-line
+
+uses genomic indices or genomic indexes?
+
+
+
+=====================================================================================================================================================
+BEDtools
+http://bedtools.readthedocs.io/en/latest/
+
+uses genomic intervals. I'm not sure what those are.
+
+tutorial: http://quinlanlab.org/tutorials/bedtools/bedtools.html
+
+it does genome arithmetic. I'm not sure what that is. Maybe this place can explain it. http://www.biostat.jhsph.edu/~khansen/teaching/2014/140.668/GenomeArithmetic.pdf
+
+installation on fedora
+
+sudo dnf install BEDTools
+
+=====================================================================================================================================================
+DESeq2
+https://bioconductor.org/packages/release/bioc/html/DESeq2.html
+
+super confusing installation
+first I had to install R
+Note: I did this one fedora 22
+	sudo yum install R
+next run R
+	R
+(optional) if you want to see what an installation in R looks like at first try:
+	install.packages('dummy')
+		just answer 'y' if it asks you questions like "would you like to create a personal library"
+		now R should be in your home directory. dummy should be inside that directory somewhere. 
+		for me it was in /home/sunlight/R/x86_64-redhat-linux-gnu-library/3.3/dummy
+	q()
+	'n'
+		this is how you quit R
+installing bioconductor. run R again. Then run:
+	source("https://bioconductor.org/biocLite.R")
+		answer 'y' like before. 
+	biocLite()
+biocLite should install. Next we'll actually install DESeq2
+	biocLite("DESeq2")
+I think that's it. Talk about an adventure.
+
+
+uses high-throughput sequencing assays > count data
+
+https://dwheelerau.com/2014/02/17/how-to-use-deseq2-to-analyse-rnaseq-data/
+http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+http://support.illumina.com/content/dam/illumina-support/help/BaseSpaceHelp_v2/Content/Vault/Informatics/Sequencing_Analysis/BS/swSEQ_mBS_FASTQFiles.html
+https://www.biostars.org/p/3408/
+https://www.biostars.org/p/174558/
+https://bioconductor.org/packages/devel/bioc/vignettes/DEFormats/inst/doc/DEFormats.html
+
+
+
+
+BowTie2______________________________________________________________________
+http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#getting-started-with-bowtie-2-lambda-phage-example
+
+gunzip /home/hwynn/toolkit/bowtie2\-2\.3\.4\-linux\-x86_64.zip ???
+
+http://www.metagenomics.wiki/tools/bowtie2/install
+http://seqanswers.com/forums/showthread.php?t=29727
+http://www.metagenomics.wiki/tools/bowtie2/index
+
+first unzip it manually then put it in toolkit.
+navigate to the folder inside toolkit.
+make
+chmod 775 bowtie2
+chmod 775 bowtie2-build
+chmod 775 bowtie2-inspect
+
+export PATH="$PATH:/home/hwynn/toolkit/bowtie2-2.3.4.1"?
+export PATH="$PATH:/home/hwynn/toolkit/bowtie2-2.3.4-linux-x86_64"?
+cd ..
+you should be inside toolkit now. 
+
+
+tar xvfz tophat-2.1.1.Linux_x86_64.tar.gz
+cd tophat-2.1.1.Linux_x86_64
+cd ~/bin  ???
+ln -s ~/tophat-2.0.0.Linux_x86_64/tophat2 ???
+these last two commands append this thing to the path I guess??
+we'll just do this
+export PATH="$PATH:/home/hwynn/toolkit/tophat-2.1.1.Linux_x86_64"
+
+
+______________________________________________________________________
+ALL:
+
+
+SRAtoolkit
+https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft/
+https://github.com/ncbi/sra-tools/wiki/HowTo:-Binary-Installation
+
+
+Trimmomatic
+http://www.usadellab.org/cms/?page=trimmomatic
+STAR
+https://github.com/alexdobin/STAR/tree/master/bin/Linux_x86_64
+HISAT2:
+http://ccb.jhu.edu/software/hisat2/index.shtml
+HTseq
+http://htseq.readthedocs.io/en/release_0.10.0/install.html#installation-on-linux
+bowtie2
+http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+R
+
+BEDtools
+http://bedtools.readthedocs.io/en/latest/content/installation.html

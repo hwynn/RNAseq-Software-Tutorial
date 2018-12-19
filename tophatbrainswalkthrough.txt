@@ -1,0 +1,40 @@
+#---walkthrough: https://insidedna.me/tutorials/view/tophat2-analysis-of-rna-expression-is
+
+cd /home/hwynn/RNAseqExamples/brain
+#---reference file (of 20th chromsome) is 	index/chr20.fa
+#---human brain RNA-seq data is  			L6_18_GTGAAA_L007_R1_001.fastq
+mkdir mapping_tophat
+mkdir mapping_tophat/index
+mv humanbrain.tar.gz mapping_tophat/humanbrain.tar.gz
+cd mapping_tophat
+tar xvfz humanbrain.tar.gz
+mv chr20.fa index/chr20.fa
+cd index
+
+
+#---aside
+bowtie2
+indexing
+useage
+bowtie2-build [options]* <reference_in> <bt2_base>
+#found from manual page 15
+#backing out to brain directory.
+my command:
+bowtie2-build -f mapping_tophat/index/chr20.fa mapping_tophat/index/name
+#wow this actually worked
+#----resuming walkthrough
+
+bowtie2-build -f chr20.fa chr20
+
+
+
+#----tophat aside
+tophat [options]* <genome_index_base> <reads1_1[,...,readsN_1]> [reads1_2,...readsN_2]
+https://ccb.jhu.edu/software/tophat/manual.shtml#toph
+
+#---resuming walkthrough
+
+cd ..
+cd ..
+tophat2 -N 3 --read-edit-dist 5 --read-realign-edit-dist 2 -i 50 -I 5000 --max-coverage-intron 5000 -M -o out mapping_tophat/index/chr20 mapping_tophat/L6_18_GTGAAA_L007_R1_001.fastq
+#wow this takes a long time. but it worked!
