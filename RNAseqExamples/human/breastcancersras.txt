@@ -1,0 +1,83 @@
+breast cancer
+
+Treatment niave model treated with vehicle			https://www.ncbi.nlm.nih.gov/sra/ERX2603580
+ERR2587301			ERR2587301-out.counts		201STG_CONTROL_3637R_1R1					TxNiav_modl_trt_w_vehicle
+ERR2587302			ERR2587302-out.counts		201STG_CONTROL_3637R_1R2					TxNiav_modl_trt_w_vehicle
+ERR2587303			ERR2587303-out.counts		201STG_CONTROL_3637R_1R3					TxNiav_modl_trt_w_vehicle
+Resistant model treated with vehicle		https://www.ncbi.nlm.nih.gov/sra/ERX2603577
+ERR2587304			ERR2587304-out.counts		201STG_ Olaparib-response_6350L_12L1		Rsist_modl_trt_w_vehicle
+ERR2587305			ERR2587305-out.counts		201STG_ Olaparib-response_6350L_12L2		Rsist_modl_trt_w_vehicle
+ERR2587306			ERR2587306-out.counts		201STG_ Olaparib-response_6350L_12L3		Rsist_modl_trt_w_vehicle
+
+Treatment niave model treated with PARP inhibitor
+ERR2587346			ERR2587346-out.counts		178_16 201STG OLAP OR 14L					TxNiav_modl_trt_w_parpInh
+ERR2587345			ERR2587345-out.counts		552_17 201STG OR Cntl 1R					TxNiav_modl_trt_w_parpInh
+ERR2587344			ERR2587344-out.counts		552_17 201STG OR Cntl 4R					TxNiav_modl_trt_w_parpInh
+ERR2587339			ERR2587339-out.counts		552_17201STG OR Cntl 3R						TxNiav_modl_trt_w_parpInh
+ERR2587338			ERR2587338-out.counts		552_17 201STG OR Cntl 1L					TxNiav_modl_trt_w_parpInh
+
+Resistant model treated with PARP inhibitor
+ERR2587348			ERR2587348-out.counts		552_17 201STG OR Olap 11R					Rsist_modl_trt_w_parpInh
+ERR2587347			ERR2587347-out.counts		552_17 201STG OR Olap 13R					Rsist_modl_trt_w_parpInh
+ERR2587343			ERR2587343-out.counts		552_17 201STG OR Olap 15R					Rsist_modl_trt_w_parpInh
+ERR2587342			ERR2587342-out.counts		552_17 201STG OR Olap 12L					Rsist_modl_trt_w_parpInh
+ERR2587341			ERR2587341-out.counts		552_17 201STG OR Olap 14R					Rsist_modl_trt_w_parpInh
+ERR2587340			ERR2587340-out.counts		552_17 201STG OR Olap 15L					Rsist_modl_trt_w_parpInh
+
+201STG_CONTROL_3637R_1R
+
+Treatment niave model treated with vehicle
+TxNiav_modl_trt_w_vehicle
+Resistant model treated with vehicle
+Rsist_modl_trt_w_vehicle
+Treatment niave model treated with PARP inhibitor
+TxNiav_modl_trt_w_parpInh
+Resistant model treated with PARP inhibitor
+Rsist_modl_trt_w_parpInh
+
+sampleFiles<- c("ERR2587301-out.counts","ERR2587302-out.counts","ERR2587303-out.counts","ERR2587304-out.counts","ERR2587305-out.counts","ERR2587306-out.counts")
+
+sampleNames <- c("201STG_CONTROL_3637R_1R1","201STG_CONTROL_3637R_1R2","201STG_CONTROL_3637R_1R3","201STG_ Olaparib-response_6350L_12L1","201STG_ Olaparib-response_6350L_12L2","201STG_ Olaparib-response_6350L_12L3")
+
+sampleCondition <- c("TxNiav_modl_trt_w_vehicle","TxNiav_modl_trt_w_vehicle","TxNiav_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle")
+
+treatments = c("TxNiav_modl_trt_w_vehicle","Rsist_modl_trt_w_vehicle")
+
+annotations
+ftp://ftp.ensembl.org/pub/release-86/gtf/homo_sapiens/Homo_sapiens.GRCh38.86.gtf.gz
+assembly
+ftp://ftp.ensembl.org/pub/release-86/fasta/homo_sapiens/dna/
+
+
+Files we need:
+
+Menu.html
+SRAtoolsOverview.html
+	software/sratoolkit.current-ubuntu64.tar.gz yes
+TrimmomaticOverview.html
+	software/Trimmomatic-0.38.zip   	yes
+STAROverview.
+	software/STAR-master.zip			yes
+Bowtie2Overview.html
+	software/bowtie2.zip				yes
+TophatOverview.html
+	software/tophat-2.1.1.Linux_x86_64.tar.gz	yes
+HTseqOverview.html
+BEDtoolsOverview.html
+	software/bedtools-2.27.1.tar.gz		yes
+DESeq2Overview.html
+RNAseqWalkthrough.html
+	style2.css
+	chart1.png
+	rna-seq-7-638.jpg
+	HEATMAP1.png
+	HEATMAP2.png
+	MAclustering1.png
+	MAclustering2.png
+	MAinitial_analysis1.png
+	MAinitial_analysis2.png
+	MATvariance_stabilizing1.png
+	MATvariance_stabilizing2.png
+
+
+
